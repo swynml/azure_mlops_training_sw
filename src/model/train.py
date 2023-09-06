@@ -22,7 +22,7 @@ def main(args):
     X_train, X_test, y_train, y_test = split_data(df)
 
     # train model
-    train_model(args.reg_rate, X_train, X_test, y_train, y_test)
+    train_model(args.reg_rate, X_train, y_train)
 
 
 def get_csvs_df(path):
@@ -46,9 +46,11 @@ def split_data(df):
     return X_train, X_test, y_train, y_test
 
 
-def train_model(reg_rate, X_train, X_test, y_train, y_test):
+def train_model(reg_rate, X_train, y_train):
     # train model
-    LogisticRegression(C=1/reg_rate, solver="liblinear").fit(X_train, y_train)
+    LogisticRegression(random_state=0,
+                       C=1/reg_rate,
+                       solver="liblinear").fit(X_train, y_train)
 
 
 def parse_args():
