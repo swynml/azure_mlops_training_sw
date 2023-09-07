@@ -18,7 +18,7 @@ jobs:
       with:
         creds: ${{secrets.AZURE_CREDENTIALS}}
     - name: install jq
-      run: apt-get install jq
+      run: sudo apt-get install jq
     - name: Get model version
       id: get_version
       run: |
