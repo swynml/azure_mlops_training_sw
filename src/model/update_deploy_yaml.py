@@ -1,4 +1,4 @@
-import os
+# import os
 import yaml
 import argparse
 
@@ -8,7 +8,8 @@ def main(args):
 
 
 def update_yaml_with_model_version(model_name):
-    file_path = os.path.join(os.getcwd(), 'src/deploy.yml')
+    # file_path = os.path.join(os.getcwd(), 'src/deploy.yml')
+    file_path = 'deploy.yml'
     with open(file_path, 'r') as f:
         content = yaml.safe_load(f)
 
