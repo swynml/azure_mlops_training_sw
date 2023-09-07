@@ -42,4 +42,4 @@ jobs:
       run: az ml online-deployment create -f deploy.yml --all-traffic --model "azureml:my-model:${{ needs.get-most-recent-model.outputs.version }}"
     #   run: az ml online-deployment update -f deploy.yml 
       #--all-traffic # First time it'll be az ml ... create --all-traffic
-      working-directory: jobs
+      working-directory: src/model
