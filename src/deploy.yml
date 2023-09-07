@@ -1,7 +1,6 @@
 $schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
 name: green
 endpoint_name: train-deployment
-# model: azureml:my-model:3
 code_configuration:
   code: ../src/model
   scoring_script: score.py
