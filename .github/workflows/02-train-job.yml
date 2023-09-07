@@ -1,0 +1,58 @@
+name: Manually trigger an Azure Machine Learning job
+
+env:
+  registered_model_name: train_model
+
+on:
+  workflow_dispatch:
+
+jobs:
+  generate_timestamp:
+    runs-on: ubuntu-latest
+    outputs:
+      timestamp: ${{ steps.generate_timestamp.outputs.timestamp }}
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v2
+
+    - name: Generate current timestamp
+      id: generate_timestamp
+      run: echo "::set-output name=timestamp::$(date +%Y%m%d%H%M%S)"
+
+  train-model:
+    needs: [generate_timestamp]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out repo
+      uses: actions/checkout@main
+    - name: Install az ml extension
+      run: az extension add -n ml -y
+    - name: Azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+    - name: Trigger train job
+      run: |
+        az ml job create 
+          --file src/train.yml
+          --name "job-${{ needs.generate_timestamp.outputs.timestamp }}"
+          --resource-group ml_rg
+          --workspace-name trainworkspace
+
+  register-model:
+    needs: [train-model, generate_timestamp]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@main
+      - name: Install az ml extension
+        run: az extension add -n ml -y
+      - name: Azure login
+        uses: azure/login@v1
+        with:
+          creds: ${{secrets.AZURE_CREDENTIALS}}
+      - name: register-model
+        run: az ml model create
+          --name $registered_model_name
+          --path azureml://jobs/job-${{ needs.generate_timestamp.outputs.timestamp }}/outputs/artifacts/paths/model/
+          --type custom_model

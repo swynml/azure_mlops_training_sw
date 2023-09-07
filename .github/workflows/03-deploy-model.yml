@@ -1,0 +1,45 @@
+name: model deployment
+
+env:
+    registered_model_name: train_model
+on:
+    workflow_dispatch:  
+
+jobs:
+  get-most-recent-model:
+    runs-on: ubuntu-latest
+    outputs:
+        version: ${{ steps.get_version.outputs.version }}
+    steps:
+    - name: check out repo
+      uses: actions/checkout@v2
+    - name: azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+    - name: install jq
+      run: apt-get install jq
+    - name: Get model version
+      id: get_version
+      run: |
+          VERSION=$(az ml model list --name $registered_model_name --resource-group ml_rg --workspace-name trainworkspace | jq -r '.[0].version')
+          echo "Version is $VERSION"
+          echo "::set-output name=version::$VERSION"  
+  deployment-job:
+    needs: [get-most-recent-model]
+    runs-on: ubuntu-latest
+    steps:
+    - name: check out repo
+      uses: actions/checkout@v2
+    - name: azure login
+      uses: azure/login@v1
+      with:
+        creds: ${{secrets.AZURE_CREDENTIALS}}
+    # Commenting out as endpoint creation is only needed during the first run
+    # - name: create-endpoint
+    #   run: az ml online-endpoint create --name train-deployment --resource-group ml_rg --workspace-name trainworkspace
+    - name: deployment-step
+      run: az ml online-deployment create -f deploy.yml --all-traffic --model "azureml:my-model:${{ needs.get-most-recent-model.outputs.version }}"
+    #   run: az ml online-deployment update -f deploy.yml 
+      #--all-traffic # First time it'll be az ml ... create --all-traffic
+      working-directory: jobs
