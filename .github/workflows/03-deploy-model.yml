@@ -27,7 +27,7 @@ jobs:
     # - name: create-endpoint
     #   run: az ml online-endpoint create --name train-deployment --resource-group ml_rg --workspace-name trainworkspace
     - name: deployment-step
-      run: az ml online-deployment create -f deploy.yml --all-traffic --model "azureml:my-model:${{ steps.get_version.outputs.version }}"
+      run: az ml online-deployment create -f deploy.yml --all-traffic --model "azureml:$registered_model_name:${{ steps.get_version.outputs.version }} --resource-group ml_rg --workspace-name trainworkspace"
     #   run: az ml online-deployment update -f deploy.yml 
       #--all-traffic # First time it'll be az ml ... create --all-traffic
       working-directory: src/model
