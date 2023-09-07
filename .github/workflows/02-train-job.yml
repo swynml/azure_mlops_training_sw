@@ -48,4 +48,4 @@ jobs:
         with:
           creds: ${{secrets.AZURE_CREDENTIALS}}
       - name: register-model
-        run: az ml model create --name $registered_model_name --path azureml://jobs/job-${{ needs.generate_timestamp.outputs.timestamp }}/outputs/artifacts/paths/model/ --type custom_model
+        run: az ml model create --name $registered_model_name --resource-group ml_rg --workspace-name trainworkspace --path azureml://jobs/job-${{ needs.generate_timestamp.outputs.timestamp }}/outputs/artifacts/paths/model/ --type custom_model
