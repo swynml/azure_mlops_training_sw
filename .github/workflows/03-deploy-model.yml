@@ -28,8 +28,7 @@ jobs:
     #   run: az ml online-endpoint create --name train-deployment --resource-group ml_rg --workspace-name trainworkspace
     - name: update deploy yaml
       run: | 
-        python model/update_deploy_yaml.py
-          --model_name azureml:$registered_model_name:${{ steps.get_version.outputs.version }}
+        python model/update_deploy_yaml.py --model_name azureml:$registered_model_name:${{ steps.get_version.outputs.version }}
       working-directory: src
     - name: deployment-step
       run: az ml online-deployment create -f deploy.yml --all-traffic --resource-group ml_rg --workspace-name trainworkspace
