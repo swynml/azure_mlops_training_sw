@@ -19,6 +19,8 @@ jobs:
         creds: ${{secrets.AZURE_CREDENTIALS}}
     - name: install jq
       run: sudo apt-get install jq
+    - name: Install az ml extension
+      run: az extension add -n ml -y
     - name: Get model version
       id: get_version
       run: |
